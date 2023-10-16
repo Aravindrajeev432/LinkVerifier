@@ -82,59 +82,37 @@ for currency in tqdm(all_data):
     if len(discord_links) == 0:
         continue
     # Print the links
-    for link in discord_links:
+
+    for url_obj in discord_links:
         
-        discord_urls : list = []
-        redirect_links : list = []
-        for url_obj in discord_links:
+        discord_url = url_obj.get("href")
+        if re.match(discord_regex, discord_url):
             
-            discord_url = url_obj.get("href")
-            if re.match(discord_regex, discord_url):
-                
-                # domain regx
-                
-                if ".com" in discord_url:
-                    # urls ends with .com
-                    # extract code from url .com
-                    code_regex = r'https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                        
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-                        
-                elif ".gg" in discord_url:
-                    
-                    # extract code from url .gg
-                    code_regex = r'https:\/\/discord\.gg\/([a-zA-Z0-9]+)'
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-                        
-                    
-            else:
-                
-                # non discord direact urls
-                response = session.get(discord_url, allow_redirects=True)
-                final_url = response.url
+            # domain regx
+            
+            if ".com" in discord_url:
+                # urls ends with .com
+                # extract code from url .com
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
                 try:
-                    code_regex = r'https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
-                    code = re.search(code_regex, final_url).group(1)
+                    code = re.search(code_regex, discord_url).group(1)
+                except:
+                    captcha_row += 1
+                    worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
+                    worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                    
+                result = is_valid_link(code)
+                if not result:
+                    row += 1
+                    worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                    worksheet1.cell(row=row, column=2, value=discord_url)
+                    
+            elif ".gg" in discord_url:
+                
+                # extract code from url .gg
+                code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
+                try:
+                    code = re.search(code_regex, discord_url).group(1)
                 except:
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
@@ -146,6 +124,25 @@ for currency in tqdm(all_data):
                     worksheet1.cell(row=row, column=2, value=discord_url)
                     
                 
+        else:
+            
+            # non discord direact urls
+            response = session.get(discord_url, allow_redirects=True)
+            final_url = response.url
+            try:
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
+                code = re.search(code_regex, final_url).group(1)
+            except:
+                captcha_row += 1
+                worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
+                worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+            result = is_valid_link(code)
+            if not result:
+                row += 1
+                worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                worksheet1.cell(row=row, column=2, value=discord_url)
+                
+            
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp

@@ -1,11 +1,6 @@
-import requests
+import re
+discord_url = "https://discord.gg/eos-network"
+code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
 
-url = 'https://solana.com/discord'
-
-# Send a GET request with allow_redirects set to True to follow redirects
-response = requests.get(url, allow_redirects=True)
-
-# Get the final URL after following redirects
-final_url = response.url
-
-print("Final URL:", final_url)
+code = re.search(code_regex, discord_url).group(1)
+print(code)
