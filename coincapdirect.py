@@ -11,7 +11,7 @@ from openpyxl import Workbook
 # Extract All Currency data
 count: int = 1
 start = 1
-limit = 500
+limit = 100
 params = {
     "start": start,
     "limit": limit,
@@ -63,10 +63,11 @@ worksheet2 = workbook.create_sheet(title="Captcha Links")
 captcha_row = 1
 row = 1
 worksheet1.cell(row=1, column=1, value="Currency Name")
-worksheet1.cell(row=1, column=2, value="Discord Link")
+worksheet1.cell(row=1, column=2, value="Invalid Discord Link")
+worksheet1.cell(row=1, column=3, value="Page Link")
 worksheet2.cell(row=captcha_row, column=1, value="Currency Name")
 worksheet2.cell(row=captcha_row, column=2, value="Discord Link")
-
+worksheet2.cell(row=captcha_row, column=3, value="Page Link")
 base_url = "https://coinmarketcap.com/currencies/"
 discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
 for currency in tqdm(all_data):
@@ -100,13 +101,13 @@ for currency in tqdm(all_data):
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    
+                    worksheet2.cell(row=captcha_row, column=3, value=url)
                 result = is_valid_link(code)
                 if not result:
                     row += 1
                     worksheet1.cell(row=row, column=1, value=currency.get('name'))
                     worksheet1.cell(row=row, column=2, value=discord_url)
-                    
+                    worksheet1.cell(row=row, column=3, value=url)
             elif ".gg" in discord_url:
                 
                 # extract code from url .gg
@@ -117,12 +118,13 @@ for currency in tqdm(all_data):
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                    worksheet2.cell(row=captcha_row, column=3, value=url)
                 result = is_valid_link(code)
                 if not result:
                     row += 1
                     worksheet1.cell(row=row, column=1, value=currency.get('name'))
                     worksheet1.cell(row=row, column=2, value=discord_url)
-                    
+                    worksheet1.cell(row=row, column=3, value=url)
                 
         else:
             
@@ -136,12 +138,13 @@ for currency in tqdm(all_data):
                 captcha_row += 1
                 worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                 worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                worksheet2.cell(row=captcha_row, column=3, value=url)
             result = is_valid_link(code)
             if not result:
                 row += 1
                 worksheet1.cell(row=row, column=1, value=currency.get('name'))
                 worksheet1.cell(row=row, column=2, value=discord_url)
-                
+                worksheet1.cell(row=row, column=3, value=url)
             
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 

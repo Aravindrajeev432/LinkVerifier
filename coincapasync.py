@@ -1,3 +1,4 @@
+from pprint import pprint
 import time
 from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
@@ -5,15 +6,13 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
 from concurrent.futures import ThreadPoolExecutor
-
 session = Session()
 from datetime import datetime
 from openpyxl import Workbook
-
 # Extract All Currency data
 count: int = 1
 start = 1
-limit = 500
+limit = 100
 params = {
     "start": start,
     "limit": limit,
@@ -33,8 +32,11 @@ while True:
             "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing",
             params=params,
         )
+        
     except (ConnectionError, Timeout, TooManyRedirects) as e:
+        print(e)
         break
+
     crypto_data = response.json().get("data").get("cryptoCurrencyList")
     all_data += crypto_data
     if len(crypto_data) == 0:
@@ -46,14 +48,15 @@ while True:
     time.sleep(1)
     break
 
-
 # valid link checker
 def is_valid_link(code: str) -> bool:
     try:
         response = session.get(f"https://discord.com/api/v9/invites/{code}")
         if response.status_code != 200:
+            print(response.json())
             return False
     except (ConnectionError, Timeout, TooManyRedirects) as e:
+        print(e)
         return False
     return True
 
@@ -66,181 +69,161 @@ worksheet2 = workbook.create_sheet(title="Captcha Links")
 captcha_row = 1
 row = 1
 worksheet1.cell(row=1, column=1, value="Currency Name")
-worksheet1.cell(row=1, column=2, value="Discord Link")
+worksheet1.cell(row=1, column=2, value="Invalid Discord Link")
+worksheet1.cell(row=1, column=3, value="Page Link")
 worksheet2.cell(row=captcha_row, column=1, value="Currency Name")
 worksheet2.cell(row=captcha_row, column=2, value="Discord Link")
+worksheet2.cell(row=captcha_row, column=3, value="Page Link")
 
-executor = ThreadPoolExecutor(5)
-elements_per_interval = 100
-interval_seconds = 10
-batch_count = 0
-
-base_url = "https://coinmarketcap.com/currencies/"
-discord_regex = r"(?:https?://)?(?:discord\.(?:[a-z]+))"
+{'slug':["https://discord.gg/"]}
+invalid_links : dict = {}
+captcha_links : dict = {}
 
 
 
-for currency in tqdm(all_data):
-    url = f"{base_url}{currency.get('slug')}/"
-    try:
-        response = session.get(url)
-    except (ConnectionError, Timeout, TooManyRedirects) as e:
-        break
-
-    html = response.text
-    soup = BeautifulSoup(html, "html.parser")
-    discord_links = soup.find_all("a", href=lambda href: href and "discord" in href)
-    if len(discord_links) == 0:
-        continue
-    # Print the links
-    for link in discord_links:
-        discord_urls: list = []
-        redirect_links: list = []
-        for url_obj in discord_links:
-            discord_url = url_obj.get("href")
-            if re.match(discord_regex, discord_url):
-                # domain regx
-
-                if ".com" in discord_url:
-                    # urls ends with .com
-                    # extract code from url .com
-                    code_regex = r"https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)"
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(
-                            row=captcha_row, column=1, value=currency.get("name")
-                        )
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-
-                elif ".gg" in discord_url:
-                    # extract code from url .gg
-                    code_regex = r"https:\/\/discord\.gg\/([a-zA-Z0-9]+)"
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(
-                            row=captcha_row, column=1, value=currency.get("name")
-                        )
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-
-            else:
-                # non discord direact urls
-                response = session.get(discord_url, allow_redirects=True)
-                final_url = response.url
-                try:
-                    code_regex = r"https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)"
-                    code = re.search(code_regex, final_url).group(1)
-                except:
-                    captcha_row += 1
-                    worksheet2.cell(
-                        row=captcha_row, column=1, value=currency.get("name")
-                    )
-                    worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                result = is_valid_link(code)
-                if not result:
-                    row += 1
-                    worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                    worksheet1.cell(row=row, column=2, value=discord_url)
-
+# for currency in tqdm(all_data):
+#     pass
 
 def process_currency(currency):
+    print(f"==>> currency: {currency.get('slug')}")
+    base_url = "https://coinmarketcap.com/currencies/"
+    discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
     url = f"{base_url}{currency.get('slug')}/"
     try:
         response = session.get(url)
+        if response.status_code != 200:
+            print(response.message)
+            return
+        
     except (ConnectionError, Timeout, TooManyRedirects) as e:
+        print("except")
+        print(e)
         return
 
     html = response.text
     soup = BeautifulSoup(html, "html.parser")
     discord_links = soup.find_all("a", href=lambda href: href and "discord" in href)
+    
+    
     if len(discord_links) == 0:
+        
         return
     # Print the links
-    for link in discord_links:
+
+    for url_obj in discord_links:
         
-        for url_obj in discord_links:
-            discord_url = url_obj.get("href")
-            if re.match(discord_regex, discord_url):
-                # domain regx
-
-                if ".com" in discord_url:
-                    # urls ends with .com
-                    # extract code from url .com
-                    code_regex = r"https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)"
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(
-                            row=captcha_row, column=1, value=currency.get("name")
-                        )
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-
-                elif ".gg" in discord_url:
-                    # extract code from url .gg
-                    code_regex = r"https:\/\/discord\.gg\/([a-zA-Z0-9]+)"
-                    try:
-                        code = re.search(code_regex, discord_url).group(1)
-                    except:
-                        captcha_row += 1
-                        worksheet2.cell(
-                            row=captcha_row, column=1, value=currency.get("name")
-                        )
-                        worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    result = is_valid_link(code)
-                    if not result:
-                        row += 1
-                        worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-
-            else:
-                # non discord direact urls
-                response = session.get(discord_url, allow_redirects=True)
-                final_url = response.url
+        discord_url = url_obj.get("href")
+        if re.match(discord_regex, discord_url):
+            
+            # domain regx
+            
+            if ".com" in discord_url:
+                
+                print(discord_url)
+                # urls ends with .com
+                # extract code from url .com
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
                 try:
-                    code_regex = r"https:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)"
-                    code = re.search(code_regex, final_url).group(1)
-                except:
-                    captcha_row += 1
-                    worksheet2.cell(
-                        row=captcha_row, column=1, value=currency.get("name")
-                    )
-                    worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                    code = re.search(code_regex, discord_url).group(1)
+                    result = is_valid_link(code)
+                    print(result)
+                    if not result:
+                        
+                        print(f"==>>invalid discord_url: {discord_url}")
+                        print(f"==>>invalid code: {code}")
+                        print(f"==>> result: {result}")
+                        print("--------")
+                        if currency.get('slug') not in invalid_links:
+                            invalid_links[currency.get('slug')] = [discord_url]
+                        else:
+                            invalid_links[currency.get('slug')].append(discord_url)
+                except Exception as e:
+                    print(f"==>>145 e: {e}")
+                    
+                    if currency.get('slug') not in captcha_links:
+                        captcha_links[currency.get('slug')] = [discord_url]
+                    else:
+                        captcha_links[currency.get('slug')].append(discord_url)
+                
+            elif ".gg" in discord_url:
+                
+                # extract code from url .gg
+                code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
+                try:
+                    code = re.search(code_regex, discord_url).group(1)
+                    result = is_valid_link(code)
+                    if not result:
+                        
+                        if currency.get('slug') not in invalid_links:
+                            invalid_links[currency.get('slug')] = [discord_url]
+                        else:
+                            invalid_links[currency.get('slug')].append(discord_url)
+                except Exception as e:
+                    print(f"==>>166 e: {e}")
+                    
+                    if currency.get('slug') not in captcha_links:
+                        captcha_links[currency.get('slug')] = [discord_url]
+                    else:
+                        captcha_links[currency.get('slug')].append(discord_url)
+                
+        else:
+            
+            # non discord direact urls
+            response = session.get(discord_url, allow_redirects=True)
+            final_url = response.url
+            try:
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
+                code = re.search(code_regex, final_url).group(1)
                 result = is_valid_link(code)
                 if not result:
-                    row += 1
-                    worksheet1.cell(row=row, column=1, value=currency.get("name"))
-                    worksheet1.cell(row=row, column=2, value=discord_url)
+                    # row += 1
+                    # worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                    # worksheet1.cell(row=row, column=2, value=discord_url)
+                    # worksheet1.cell(row=row, column=3, value=url)
+                    if currency.get('slug') not in invalid_links:
+                            invalid_links[currency.get('slug')] = [discord_url]
+                    else:
+                            invalid_links[currency.get('slug')].append(discord_url)
+            except Exception as e:
+                print(f"==>>192 e: {e}/{final_url}")
+                # captcha_row += 1
+                # worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
+                # worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                # worksheet2.cell(row=captcha_row, column=3, value=url)
+                if currency.get('slug') not in captcha_links:
+                        captcha_links[currency.get('slug')] = [discord_url]
+                else:
+                        captcha_links[currency.get('slug')].append(discord_url)
+                        
+            
+
+print(len(all_data))
+start = time.time()
+print(f"==>> start: {start}")
 
 
+executor = ThreadPoolExecutor(4)
+elements_per_interval = 4
+interval_seconds = 2
+batch_count = 0
 
+for currency in range(0, len(all_data), elements_per_interval):
+    batch = all_data[currency:currency+elements_per_interval]
+    [executor.submit(process_currency, c) for c in batch]
+    time.sleep(interval_seconds)
 
+executor.shutdown()
 
 
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+pprint(invalid_links)
 
+print(f"==>> captcha_links: {captcha_links}")
 # Create the filename with the timestamp
-filename = f"{timestamp}.xlsx"
+# filename = f"{timestamp}.xlsx"
 
-# Save the workbook to the generated filename
-workbook.save(filename)
+# # Save the workbook to the generated filename
+# workbook.save(filename)
+
+total_time = time.time() - start
+print(f"time taken for contacts: {total_time:.2f} seconds")
