@@ -49,6 +49,8 @@ def is_valid_link(code: str) -> bool:
     try:
         response = session.get(f"https://discord.com/api/v9/invites/{code}")
         if response.status_code != 200:
+            if response.status_code == 429:
+                print(response.json())
             return False
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         return False
