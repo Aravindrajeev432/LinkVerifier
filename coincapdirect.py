@@ -4,6 +4,8 @@ from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
+from icecream import ic
+from utils import is_valid_link
 
 session = Session()
 from datetime import datetime
@@ -11,7 +13,7 @@ from openpyxl import Workbook
 # Extract All Currency data
 count: int = 1
 start = 1
-limit = 100
+limit = 500
 params = {
     "start": start,
     "limit": limit,
@@ -43,18 +45,6 @@ while True:
     count += 1
     time.sleep(1)
     break
-
-# valid link checker
-def is_valid_link(code: str) -> bool:
-    try:
-        response = session.get(f"https://discord.com/api/v9/invites/{code}")
-        if response.status_code != 200:
-            if response.status_code == 429:
-                print(response.json())
-            return False
-    except (ConnectionError, Timeout, TooManyRedirects) as e:
-        return False
-    return True
 
 
 # Extract All Currency slug
@@ -99,34 +89,37 @@ for currency in tqdm(all_data):
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
-                except:
+                    result = is_valid_link(session=session,code=code)
+                    if not result:
+                        row += 1
+                        worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                        worksheet1.cell(row=row, column=2, value=discord_url)
+                        worksheet1.cell(row=row, column=3, value=url)
+                except Exception as e:
+                    # ic(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     worksheet2.cell(row=captcha_row, column=2, value=discord_url)
                     worksheet2.cell(row=captcha_row, column=3, value=url)
-                result = is_valid_link(code)
-                if not result:
-                    row += 1
-                    worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                    worksheet1.cell(row=row, column=2, value=discord_url)
-                    worksheet1.cell(row=row, column=3, value=url)
+                
             elif ".gg" in discord_url:
                 
                 # extract code from url .gg
                 code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
-                except:
+                    result = is_valid_link(session=session,code=code)
+                    if not result:
+                        row += 1
+                        worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                        worksheet1.cell(row=row, column=2, value=discord_url)
+                        worksheet1.cell(row=row, column=3, value=url)
+                except Exception as e:
+                    # ic(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     worksheet2.cell(row=captcha_row, column=2, value=discord_url)
                     worksheet2.cell(row=captcha_row, column=3, value=url)
-                result = is_valid_link(code)
-                if not result:
-                    row += 1
-                    worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                    worksheet1.cell(row=row, column=2, value=discord_url)
-                    worksheet1.cell(row=row, column=3, value=url)
                 
         else:
             
@@ -136,18 +129,18 @@ for currency in tqdm(all_data):
             try:
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
                 code = re.search(code_regex, final_url).group(1)
-            except:
+                result = is_valid_link(session=session,code=code)
+                if not result:
+                    row += 1
+                    worksheet1.cell(row=row, column=1, value=currency.get('name'))
+                    worksheet1.cell(row=row, column=2, value=discord_url)
+                    worksheet1.cell(row=row, column=3, value=url)
+            except Exception as e:
+                # ic(e)
                 captcha_row += 1
                 worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                 worksheet2.cell(row=captcha_row, column=2, value=discord_url)
                 worksheet2.cell(row=captcha_row, column=3, value=url)
-            result = is_valid_link(code)
-            if not result:
-                row += 1
-                worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                worksheet1.cell(row=row, column=2, value=discord_url)
-                worksheet1.cell(row=row, column=3, value=url)
-            
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp

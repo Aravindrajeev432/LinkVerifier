@@ -6,7 +6,11 @@ if res.status_code != 200:
 else:
     print("ConiMarkert cap working")
 
-res = requests.get("https://discord.com/api/v10/invites/2up5U32")
+res = requests.get("https://discord.com/api/v10/invites/hQs894U", headers={"Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl"})
+
+print(f"==>> 'x-ratelimit-limit': {res.headers.get('x-ratelimit-limit')}")
+
+print(f"==>> 'x-ratelimit-remaining': {res.headers.get('x-ratelimit-remaining')}")
 if res.status_code != 200:
     print("Discord not working")
 else:
