@@ -115,7 +115,7 @@ def process_currency(currency):
             if ".com" in discord_url:
                 # urls ends with .com
                 # extract code from url .com
-                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
                     # result = is_valid_link(code)
@@ -155,7 +155,7 @@ def process_currency(currency):
             response = session.get(discord_url, allow_redirects=True)
             final_url = response.url
             try:
-                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9]+)'
+                code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 code = re.search(code_regex, final_url).group(1)
                 # result = is_valid_link(code)
                 result = False

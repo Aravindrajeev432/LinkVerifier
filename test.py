@@ -4,41 +4,64 @@ from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import time  
 from concurrent.futures import ThreadPoolExecutor
+import re
 
+from utils import is_valid_link
 session = Session()
 headers = {
     "Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",
 }
 session.headers.update(headers)
-def is_valid_link(code: str) -> bool:
+
+discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
+discord_url = "https://discord.gg/d73qTF9"
+if re.match(discord_regex, discord_url):
+    
+    # domain regx
+    
+    if ".com" in discord_url:
+        print(".com")
+        # urls ends with .com
+        # extract code from url .com
+        code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
+        try:
+            code = re.search(code_regex, discord_url).group(1)
+            result = is_valid_link(session=session,code=code)
+            if not result:
+                print("not valid")
+        except Exception as e:
+            # ic(e)
+            
+            print("captcha link")
+    elif ".gg" in discord_url:
+        print(".gg")
+        # extract code from url .gg
+        code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
+        try:
+            code = re.search(code_regex, discord_url).group(1)
+            result = is_valid_link(session=session,code=code)
+            if not result:
+                print("not valid")
+        except Exception as e:
+            # ic(e)
+            print("captcha link")
+        
+else:
+    
+    # non discord direact urls
+    print("non discord direact urls")
+    response = session.get(discord_url, allow_redirects=True)
+    final_url = response.url
+    print(f"==>> final_url: {final_url}")
+    
     try:
-        response = session.get(f"https://discord.com/api/v9/invites/{code}")
-        print(f"==>> response.headers['x-ratelimit-remaining']: {response.headers['x-ratelimit-remaining']}")
-        print(f"==>> response.headers['x-ratelimit-reset']: {response.headers['x-ratelimit-reset']}")
-        print(f"==>> response.headers['x-ratelimit-reset-after']: {response.headers['x-ratelimit-reset-after']}")
-        print("---")
-        if response.status_code != 200:
-            
-            print(response.json())
-            
-            return False
-        else:
-            pass
-    except (ConnectionError, Timeout, TooManyRedirects) as e:
-        print(e)
-        return False
-    return True
+        code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
+        code = re.search(code_regex, final_url).group(1)
+        print(f"==>> code: {code}")
 
-
-
-executor = ThreadPoolExecutor(10)
-elements_per_interval = 4
-batch = ["2up5U32"] * 15
-  
-epoch_time = int(time.time())
-
-[executor.submit(is_valid_link, c) for c in batch]
-
-executor.shutdown()
-print(f"==>> epoch_time: {epoch_time}")
-
+        result = is_valid_link(session=session,code=code)
+        if not result:
+            print("not valid")
+    except Exception as e:
+        # ic(e)
+        print("captcha link")
