@@ -7,7 +7,7 @@ def is_valid_link(session: Session,code: str) -> bool:
                                headers={"Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",})
         limit_remining : str = response.headers.get('x-ratelimit-remaining')
         
-        if int(limit_remining) == 1:
+        if int(limit_remining) <= 1:
             
             time.sleep(float(response.headers.get('x-ratelimit-reset-after')))
         if response.status_code != 200:
