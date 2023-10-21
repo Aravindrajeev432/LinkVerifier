@@ -4,13 +4,13 @@ from typing import Optional
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from bs4 import BeautifulSoup
 import re
-def is_valid_link(session: Session,code: str) -> bool:
+def is_valid_link_checker(session: Session,code: str) -> bool:
     try:
         response = session.get(f"https://discord.com/api/v10/invites/{code}",
                                headers={"Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",})
         limit_remining : str = response.headers.get('x-ratelimit-remaining')
         
-        if int(limit_remining) == 1:
+        if int(limit_remining) <= 1:
             
             time.sleep(float(response.headers.get('x-ratelimit-reset-after')))
         if response.status_code != 200:
@@ -27,7 +27,7 @@ def is_valid_link(session: Session,code: str) -> bool:
         return False
     return True
 
-def coingecko_code_extracter(session: Session,coin_name : str) -> Optional[str]:
+def coingecko_code_extracter(session: Session,coin_id : str) -> Optional[str]:
     headers= {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -37,11 +37,13 @@ def coingecko_code_extracter(session: Session,coin_name : str) -> Optional[str]:
     'Cache-Control': 'max-age=0'
     }
     base_url = "https://www.coingecko.com/en/coins/"
-    url = f"{base_url}{coin_name}"
+    url = f"{base_url}{coin_id}"
+    
 
     try:
         response = session.get(url=url, headers=headers)
         if response.status_code != 200:
+            print(f"==>> url: {url}")
             print(f"==>> status_code: {response.status_code}")
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         return None

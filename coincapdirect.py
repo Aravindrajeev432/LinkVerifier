@@ -10,6 +10,7 @@ from utils import is_valid_link
 session = Session()
 from datetime import datetime
 from openpyxl import Workbook
+from openpyxl.drawing.image import Hyperlink
 # Extract All Currency data
 count: int = 1
 start = 1
@@ -93,15 +94,23 @@ for currency in tqdm(all_data):
                     if not result:
                         row += 1
                         worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-                        worksheet1.cell(row=row, column=3, value=url)
+                        discord_cell = worksheet1.cell(row=row, column=2, value=discord_url)
+                        discord_cell.hyperlink = discord_url
+                        discord_cell.style = 'Hyperlink'
+                        url_cell = worksheet1.cell(row=row, column=3, value=url)
+                        url_cell.hyperlink = url
+                        url_cell.style = 'Hyperlink'
+                        
                 except Exception as e:
                     # ic(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
-                    worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    worksheet2.cell(row=captcha_row, column=3, value=url)
-                
+                    discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                    discord_cell.hyperlink = discord_url
+                    discord_cell.style = 'Hyperlink'
+                    url_cell = worksheet2.cell(row=captcha_row, column=3, value=url)
+                    url_cell.hyperlink = url
+                    url_cell.style = 'Hyperlink'
             elif ".gg" in discord_url:
                 
                 # extract code from url .gg
@@ -112,14 +121,22 @@ for currency in tqdm(all_data):
                     if not result:
                         row += 1
                         worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                        worksheet1.cell(row=row, column=2, value=discord_url)
-                        worksheet1.cell(row=row, column=3, value=url)
+                        discord_cell = worksheet1.cell(row=row, column=2, value=discord_url)
+                        discord_cell.hyperlink = discord_url
+                        discord_cell.style = 'Hyperlink'
+                        url_cell = worksheet1.cell(row=row, column=3, value=url)
+                        url_cell.hyperlink = url
+                        url_cell.style = 'Hyperlink'
                 except Exception as e:
                     # ic(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
-                    worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                    worksheet2.cell(row=captcha_row, column=3, value=url)
+                    discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                    discord_cell.hyperlink = discord_url
+                    discord_cell.style = 'Hyperlink'
+                    url_cell = worksheet2.cell(row=captcha_row, column=3, value=url)
+                    url_cell.hyperlink = url
+                    url_cell.style = 'Hyperlink'
                 
         else:
             
@@ -136,14 +153,22 @@ for currency in tqdm(all_data):
                 if not result:
                     row += 1
                     worksheet1.cell(row=row, column=1, value=currency.get('name'))
-                    worksheet1.cell(row=row, column=2, value=discord_url)
-                    worksheet1.cell(row=row, column=3, value=url)
+                    discord_cell = worksheet1.cell(row=row, column=2, value=discord_url)
+                    discord_cell.hyperlink = discord_url
+                    discord_cell.style = 'Hyperlink'
+                    url_cell = worksheet1.cell(row=row, column=3, value=url)
+                    url_cell.hyperlink = url
+                    url_cell.style = 'Hyperlink'
             except Exception as e:
                 # ic(e)
                 captcha_row += 1
                 worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
-                worksheet2.cell(row=captcha_row, column=2, value=discord_url)
-                worksheet2.cell(row=captcha_row, column=3, value=url)
+                discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
+                discord_cell.hyperlink = discord_url
+                discord_cell.style = 'Hyperlink'
+                url_cell = worksheet2.cell(row=captcha_row, column=3, value=url)
+                url_cell.hyperlink = url
+                url_cell.style = 'Hyperlink'
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp
