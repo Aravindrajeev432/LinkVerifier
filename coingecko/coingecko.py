@@ -8,7 +8,7 @@ from openpyxl import Workbook
 
 session: Session = Session()
 coingecko_url: str = "https://api.coingecko.com/api/v3/coins/list"
-coingecko_coin_url = "https://www.coingecko.com/en/coins/"
+
 
 workbook = Workbook()
 worksheet1 = workbook.active
@@ -29,15 +29,20 @@ ic(len(coingecko_res.json()))
 limit = 0
 for coin in tqdm(coingecko_res.json()):
     limit += 1
-    code = coingecko_code_extracter(session=session,coin_id=coin.get('id'))
-    discord_url = f"https://discord.com/invite/{code}"
-    url = f"{coingecko_coin_url}{coin.get('id')}"
-    # coingecko's discord link
-    if code == "EhrkaCH":
-        continue
-    if code:
+    # if limit == 500:
+    #     break
+    coin_obj : dict = coingecko_code_extracter(session=session,coin_id=coin.get('id'))
+    if not coin_obj:
+        # not 200 when taking coingecko page
         
-        is_valid_link : bool = is_valid_link_checker(session=session,code=code)
+        continue
+    if coin_obj.get('code') :
+        discord_url = f"https://discord.com/invite/{coin_obj.get('code')}"
+        url = coin_obj.get('url')
+        # coingecko's discord link
+        if coin_obj.get('code') == "EhrkaCH":
+            continue
+        is_valid_link : bool = is_valid_link_checker(session=session,code=coin_obj.get('code'))
         if not is_valid_link:
             
             row += 1
@@ -49,7 +54,7 @@ for coin in tqdm(coingecko_res.json()):
             url_cell.hyperlink = url
             url_cell.style = 'Hyperlink'
             
-    else:
+    elif coin_obj.get('captcha'):
         
         captcha_row += 1
         worksheet2.cell(row=captcha_row, column=1, value=coin.get('name'))
@@ -59,6 +64,7 @@ for coin in tqdm(coingecko_res.json()):
         url_cell = worksheet2.cell(row=captcha_row, column=3, value=url)
         url_cell.hyperlink = url
         url_cell.style = 'Hyperlink'
+        time.sleep(1)
     
 
 timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M")

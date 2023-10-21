@@ -9,9 +9,5 @@ headers= {
     'Cache-Control': 'max-age=0'
 }
 
-redirect_url = f"https://www.coingecko.com/en/search_redirect?id=1move token&amp;type=coin"
-
-response = requests.get(url = redirect_url, headers=headers, allow_redirects=True)
+response = requests.get('https://coinsniper.net/new?page=1', headers=headers)
 print(response.status_code)
-print(response.url)
-print(response.headers)
