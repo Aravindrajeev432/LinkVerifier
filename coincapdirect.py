@@ -1,6 +1,6 @@
 import time
 from requests import Session
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects,MissingSchema
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
@@ -124,7 +124,10 @@ for currency in tqdm(all_data):
         else:
             
             # non discord direact urls
-            response = session.get(discord_url, allow_redirects=True)
+            try:
+                response = session.get(discord_url, allow_redirects=True)
+            except MissingSchema:
+                continue
             final_url = response.url
             try:
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
