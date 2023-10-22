@@ -1,7 +1,7 @@
 import time
 from requests import Session
 from typing import Optional
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects, MissingSchema
 from bs4 import BeautifulSoup
 import re
 def is_valid_link_checker(session: Session,code: str) -> bool:
@@ -22,7 +22,7 @@ def is_valid_link_checker(session: Session,code: str) -> bool:
                 print(f"==>> response.headers.get('x-ratelimit-reset-after'): {response.headers.get('x-ratelimit-reset-after')}")
                 pass
             return False
-    except (ConnectionError, Timeout, TooManyRedirects) as e:
+    except (ConnectionError, Timeout, TooManyRedirects, MissingSchema) as e:
         print(e)
         return False
     return True

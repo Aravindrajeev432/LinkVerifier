@@ -5,7 +5,7 @@ from icecream import ic
 from tqdm import tqdm
 from utils import  is_valid_link_checker
 from datetime import datetime
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects, MissingSchema
 from openpyxl import Workbook
 import hashlib
 import json
@@ -59,7 +59,11 @@ if loaded_data != coingecko_res.json():
     for coin in tqdm(coingecko_res.json()):
         time.sleep(1.5)
         redirect_url = f"https://www.coingecko.com/en/search_redirect?id={coin.get('id')}&amp;type=coin"
-        response = session.get(url=redirect_url, headers=headers, allow_redirects=True)
+        try:
+            response = session.get(url=redirect_url, headers=headers, allow_redirects=True)
+        except (ConnectionError, Timeout, TooManyRedirects, MissingSchema) as e:
+            redirect_url
+            continue
         if response.status_code != 200:
             print("rate Limit Exceeded")
             continue
@@ -80,7 +84,7 @@ else:
                 #     time.sleep(int(response.headers.get('Retry-After')))
                 print(f"==>> status_code: {response.status_code}")
                 continue
-        except (ConnectionError, Timeout, TooManyRedirects) as e:
+        except (ConnectionError, Timeout, TooManyRedirects, MissingSchema) as e:
             continue
         html = response.text
         soup = BeautifulSoup(html, "html.parser")
