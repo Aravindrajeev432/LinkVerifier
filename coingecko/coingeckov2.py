@@ -56,7 +56,7 @@ if loaded_data != coingecko_res.json():
         json.dump(coingecko_res.json(), json_file)
     coin_list_urls: list[dict] = []
     print("Building url list")
-    for coin in tqdm(coingecko_res.json()[:100]):
+    for coin in tqdm(coingecko_res.json()):
         time.sleep(1.5)
         redirect_url = f"https://www.coingecko.com/en/search_redirect?id={coin.get('id')}&amp;type=coin"
         response = session.get(url=redirect_url, headers=headers, allow_redirects=True)
