@@ -39,42 +39,7 @@ headers = {
 }
 
 
-ic(len(coingecko_res.json()))
-try:
-    with open("coin_list.json", "r") as json_file:
-        loaded_data = json.load(json_file)
-    # checking urls json exist
-    with open("coin_list_urls.json", "r") as json_file:
-        coin_list_urls = json.load(json_file)
-except FileNotFoundError:
-    loaded_data = None
-
-
-if loaded_data != coingecko_res.json():
-    # write new file
-    with open("coin_list.json", "w") as json_file:
-        json.dump(coingecko_res.json(), json_file)
-    coin_list_urls: list[dict] = []
-    print("Building url list")
-    for coin in tqdm(coingecko_res.json()):
-        time.sleep(2)
-        redirect_url = f"https://www.coingecko.com/en/search_redirect?id={coin.get('id')}&amp;type=coin"
-        try:
-            response = session.get(url=redirect_url, headers=headers, allow_redirects=True)
-        except (ConnectionError, Timeout, TooManyRedirects, MissingSchema) as e:
-            redirect_url
-            continue
-        if response.status_code != 200:
-            print("rate Limit Exceeded")
-            continue
-        url = response.url
-
-        coin_list_urls.append({"name": coin.get("name"), "url": url})
-    else:
-        with open("coin_list_urls.json", "w") as json_file:
-            json.dump(coin_list_urls, json_file)
-        print("Building url list Finished")
-else:
+def process_coin():
     print("Checking Discord Links")
     for coin in tqdm(coin_list_urls):
         try:
@@ -211,6 +176,49 @@ else:
 
     else:
         print("Finished")
+
+# start
+
+ic(len(coingecko_res.json()))
+try:
+    with open("coin_list.json", "r") as json_file:
+        loaded_data = json.load(json_file)
+    # checking urls json exist
+    with open("coin_list_urls.json", "r") as json_file:
+        coin_list_urls = json.load(json_file)
+except FileNotFoundError:
+    loaded_data = None
+
+
+if loaded_data != coingecko_res.json():
+    # write new file
+    with open("coin_list.json", "w") as json_file:
+        json.dump(coingecko_res.json(), json_file)
+    coin_list_urls: list[dict] = []
+    print("Building url list")
+    for coin in tqdm(coingecko_res.json()[:100]):
+        time.sleep(2)
+        redirect_url = f"https://www.coingecko.com/en/search_redirect?id={coin.get('id')}&amp;type=coin"
+        try:
+            response = session.get(url=redirect_url, headers=headers, allow_redirects=True)
+        except (ConnectionError, Timeout, TooManyRedirects, MissingSchema) as e:
+            redirect_url
+            continue
+        if response.status_code != 200:
+            print("rate Limit Exceeded")
+            print(response.status_code)
+            continue
+        url = response.url
+
+        coin_list_urls.append({"name": coin.get("name"), "url": url})
+    else:
+        with open("coin_list_urls.json", "w") as json_file:
+            json.dump(coin_list_urls, json_file)
+        print("Building url list Finished")
+        process_coin()
+else:
+    print("coin_list.json is up to date")
+    process_coin()
 timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M")
 
 # Create the filename with the timestamp
