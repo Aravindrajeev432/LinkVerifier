@@ -148,7 +148,10 @@ for link in tqdm(all_links):
                     time.sleep(1)
         else:
             # non discord direact urls
-            response = session.get(discord_url, allow_redirects=True)
+            try:
+                response = session.get(discord_url, allow_redirects=True)
+            except requests.exceptions.MissingSchema:
+                continue
             final_url = response.url
             try:
                 code_regex = r"https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)"
