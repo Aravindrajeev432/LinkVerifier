@@ -34,9 +34,21 @@ Use python for Windows, python3 for Mac/Linux
   cd coingecko
   python3 coingecko.py
 ```
-## Coingecko Version 2
+## Coingecko Version 2(Depricated)
 ```bash
   cd coingecko
   python3 coingeckov2.py
 
 ```
+
+## Coingecko Version 3
+```bash
+  cd coingecko
+  python3 coingeckov3.py
+
+```
+
+# Notes
+In coingeckov3 reduced coin page link fetch time
+Try latest version specified
+CoinSniper & Opensea coming soon..
