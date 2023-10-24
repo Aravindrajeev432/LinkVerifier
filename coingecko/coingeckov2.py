@@ -40,6 +40,8 @@ headers = {
 
 
 def process_coin():
+    row = 1
+    captcha_row = 1
     print("Checking Discord Links")
     for coin in tqdm(coin_list_urls):
         try:
