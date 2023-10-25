@@ -37,11 +37,15 @@ base_url = "https://www.coingecko.com"
 tables: list = []
 all_links: list = []
 page: int = 0
+valid : int = 0
+invalid = 0
+captcha = 0
+
 while True:
     page += 1
     print("Processing page {0}".format(page))
     params = {"page": page}
-    if page == 6:
+    if page == 2:
         break
     response = requests.get(base_url, headers=headers, params=params)
     if response.status_code == 429:
@@ -93,7 +97,7 @@ for link in tqdm(all_links):
                     result = is_valid_link_checker(session=session, code=code)
                     if not result:
                         row += 1
-
+                        print(discord_url)
                         discord_cell = worksheet1.cell(
                             row=row, column=2, value=discord_url
                         )
@@ -125,7 +129,7 @@ for link in tqdm(all_links):
                     result = is_valid_link_checker(session=session, code=code)
                     if not result:
                         row += 1
-
+                        print(discord_url)
                         discord_cell = worksheet1.cell(
                             row=row, column=2, value=discord_url
                         )
@@ -136,7 +140,7 @@ for link in tqdm(all_links):
                         url_cell.style = "Hyperlink"
                 except Exception as e:
                     captcha_row += 1
-
+                    
                     discord_cell = worksheet2.cell(
                         row=captcha_row, column=2, value=discord_url
                     )
@@ -151,6 +155,7 @@ for link in tqdm(all_links):
             try:
                 response = session.get(discord_url, allow_redirects=True)
             except requests.exceptions.MissingSchema:
+                
                 continue
             final_url = response.url
             try:
@@ -161,7 +166,7 @@ for link in tqdm(all_links):
                 result = is_valid_link_checker(session=session, code=code)
                 if not result:
                     row += 1
-
+                    print(discord_url)
                     discord_cell = worksheet1.cell(row=row, column=2, value=discord_url)
                     discord_cell.hyperlink = discord_url
                     discord_cell.style = "Hyperlink"
