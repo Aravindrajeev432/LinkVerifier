@@ -10,7 +10,7 @@ from utils import is_valid_link
 session = Session()
 from datetime import datetime
 from openpyxl import Workbook
-from openpyxl.drawing.image import Hyperlink
+
 # Extract All Currency data
 count: int = 1
 start = 1
