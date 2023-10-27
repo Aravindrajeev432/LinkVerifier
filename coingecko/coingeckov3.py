@@ -108,6 +108,7 @@ for link in tqdm(all_links):
                         url_cell.style = "Hyperlink"
 
                 except Exception as e:
+                    print(e)
                     captcha_row += 1
 
                     discord_cell = worksheet2.cell(
@@ -139,6 +140,7 @@ for link in tqdm(all_links):
                         url_cell.hyperlink = link
                         url_cell.style = "Hyperlink"
                 except Exception as e:
+                    print(e)
                     captcha_row += 1
                     
                     discord_cell = worksheet2.cell(
