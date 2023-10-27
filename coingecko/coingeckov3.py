@@ -196,7 +196,7 @@ else:
 timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M")
 
 # Create the filename with the timestamp
-filename = f"coingecko_invalid_links_{timestamp}.xlsx"
+filename = f"coingecko_invalid_links.xlsx"
 
 # Save the workbook to the generated filename
 workbook.save(filename)
