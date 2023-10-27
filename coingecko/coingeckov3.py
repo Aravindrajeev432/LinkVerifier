@@ -45,8 +45,8 @@ while True:
     page += 1
     print("Processing page {0}".format(page))
     params = {"page": page}
-    if page == 2:
-        break
+    # if page == 2:
+    #     break
     response = requests.get(base_url, headers=headers, params=params)
     if response.status_code == 429:
         page -= 1
@@ -196,7 +196,7 @@ else:
 timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M")
 
 # Create the filename with the timestamp
-filename = f"coingecko_invalid_links.xlsx"
+filename = "coingecko_invalid_links.xlsx"
 
 # Save the workbook to the generated filename
 workbook.save(filename)
