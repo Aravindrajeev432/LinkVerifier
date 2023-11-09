@@ -48,6 +48,12 @@ Use python for Windows, python3 for Mac/Linux
 
 ```
 
+## Crypto.com
+```
+  cd cryptocom
+  python3 cryptov1.py
+```
+
 # Notes
 In coingeckov3 reduced coin page link fetch time
 Try latest version specified
