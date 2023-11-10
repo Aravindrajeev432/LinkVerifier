@@ -56,7 +56,7 @@ while True:
     # extract slugs
     for coin in coin_data:
         all_coin_links.append(f"https://crypto.com/price/{coin.get('slug')}")
-    
+    break
 print("Done fetching all coin data...")
 print("Searching for invalid links...")
 
