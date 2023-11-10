@@ -10,7 +10,8 @@ def is_valid_link_checker(session: Session,code: str) -> bool:
         response = session.get(f"https://discord.com/api/v10/invites/{code}",
                                headers={"Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",})
         limit_remining : str = response.headers.get('x-ratelimit-remaining')
-        
+        print(f"==>> limit_remining: {limit_remining}")
+        print(type(limit_remining))
         if int(limit_remining) <= 1:
             
             time.sleep(float(response.headers.get('x-ratelimit-reset-after')))

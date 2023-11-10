@@ -38,6 +38,7 @@ while True:
         print(f"==>> response.headers: {response.headers}")
         break
     res_collections_all : list = response.json().get("collections")
+    print(len(res_collections_all))
     if len(res_collections_all) == 0:
         break
 
