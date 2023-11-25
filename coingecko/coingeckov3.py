@@ -52,9 +52,12 @@ while True:
         page -= 1
         time.sleep(20)
         continue
+    if response.status_code != 200:
+        print("something went wrong")
+        break
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table = soup.find("div", {"class": "coingecko-table"})
+    table = soup.find("div", {"class": "tw-overflow-x-auto 2lg:tw-overflow-x-visible 2lg:tw-flex 2lg:tw-justify-center"})
     if table:
         all_page_links: list = table.find_all(
             "a", href=lambda href: href and "en" in href

@@ -29,7 +29,7 @@ while True:
 
     print(f"==>> next: {next}")
     opensea_collections_url: str = (
-        f"https://api.opensea.io/api/v2/collections?include_hidden=false&chain_identifier=arbitrum&next={next}"
+        f"https://api.opensea.io/api/v2/collections?include_hidden=false&chain_identifier=ethereum&next={next}"
     )
     headers = {"accept": "application/json", "x-api-key": api_key}
     response = session.get(opensea_collections_url, headers=headers)
@@ -38,13 +38,18 @@ while True:
         print(f"==>> response.headers: {response.headers}")
         break
     res_collections_all : list = response.json().get("collections")
-    print(len(res_collections_all))
+    
     if len(res_collections_all) == 0:
         break
 
     # filter collections with discord url link
-    res_collections = filter(discord_link_filter, res_collections_all)
-    collections.append(list(res_collections))
+    res_collections = filter(discord_link_filter, res_collections_all) 
+    if len(list(res_collections)) != 0:
+        
+        collections.append(list(res_collections))
+    print(f"==>> collections: {collections}")
+    print(collections)
+    
     next = response.json().get("next")
 
 
