@@ -46,7 +46,7 @@ while True:
     count += 1
     time.sleep(1)
     break
-
+ic(len(all_data))
 
 # Extract All Currency slug
 workbook = Workbook()
@@ -90,6 +90,7 @@ for currency in tqdm(all_data):
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
+                    ic(code)
                     result = is_valid_link(session=session,code=code)
                     if not result:
                         row += 1
@@ -117,6 +118,7 @@ for currency in tqdm(all_data):
                 code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
+                    ic(code)
                     result = is_valid_link(session=session,code=code)
                     if not result:
                         row += 1
@@ -149,6 +151,7 @@ for currency in tqdm(all_data):
             try:
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 code = re.search(code_regex, final_url).group(1)
+                ic(code)
                 result = is_valid_link(session=session,code=code)
                 if not result:
                     row += 1
@@ -172,7 +175,9 @@ for currency in tqdm(all_data):
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp
-filename = f"{timestamp}.xlsx"
+filename = "coincapmarket_invalid_links.xlsx"
 
+# Save the workbook to the generated filename
+workbook.save(filename)
 # Save the workbook to the generated filename
 workbook.save(filename)
