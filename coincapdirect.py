@@ -45,7 +45,7 @@ while True:
 
     count += 1
     time.sleep(1)
-    break
+    # break
 ic(len(all_data))
 
 # Extract All Currency slug
