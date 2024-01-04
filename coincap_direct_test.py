@@ -11,18 +11,10 @@ session = Session()
 from datetime import datetime
 from openpyxl import Workbook
 
-batch_size: int = 2000
-batch_count: int = 0
-
-
-ic("Please wait :)")
-
-
-
 # Extract All Currency data
 count: int = 1
 start = 1
-limit = 500
+limit = 100
 params = {
     "start": start,
     "limit": limit,
@@ -53,10 +45,8 @@ while True:
 
     count += 1
     time.sleep(1)
-    
+    break
 ic(len(all_data))
-
-
 
 # Extract All Currency slug
 workbook = Workbook()
@@ -73,19 +63,7 @@ worksheet2.cell(row=captcha_row, column=2, value="Discord Link")
 worksheet2.cell(row=captcha_row, column=3, value="Page Link")
 base_url = "https://coinmarketcap.com/currencies/"
 discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
-
-total_batch : int = int(len(all_data)/batch_size)
-ic("Total Batches: ",total_batch)
-user_input = int(input("Enter the batch number (starting from 1): "))
-
-
-count: int = 0
-
-start_index = (user_input - 1) * batch_size
-end_index = user_input * batch_size
-
-for currency in tqdm(all_data[start_index:end_index]):
-    
+for currency in tqdm(all_data):
     url = f"{base_url}{currency.get('slug')}/"
     try:
         response = session.get(url)
@@ -197,7 +175,7 @@ for currency in tqdm(all_data[start_index:end_index]):
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp
-filename = f"coincapmarket_invalid_links_{user_input}.xlsx"
+filename = "coincapmarket_invalid_links.xlsx"
 
 # Save the workbook to the generated filename
 workbook.save(filename)
