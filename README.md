@@ -53,6 +53,16 @@ Use python for Windows, python3 for Mac/Linux
   cd cryptocom
   python3 cryptov1.py
 ```
+## OpenSea
+get all coin data from https://opensea.io/rankings?sortBy=total_volume
+select All, and lookfor a graphql request in network tab . copy the data.
+create and paste in 'custom_data.json' file . then run openseav3.py,
+After completion run check_discord_links.py to get the invalid dicord links
+ ```
+    cd opensea
+    python3 openseav3.py
+    python3 check_discord_links.py
+ ``` 
 
 # Notes
 In coingeckov3 reduced coin page link fetch time
