@@ -11,7 +11,7 @@ session = Session()
 from datetime import datetime
 from openpyxl import Workbook
 
-batch_size: int = 2000
+batch_size: int = 500
 batch_count: int = 0
 
 
@@ -167,7 +167,7 @@ for currency in tqdm(all_data[start_index:end_index]):
             # non discord direact urls
             try:
                 response = session.get(discord_url, allow_redirects=True)
-            except MissingSchema:
+            except (MissingSchema,ConnectionError, Timeout, TooManyRedirects) as e:
                 continue
             final_url = response.url
             try:
