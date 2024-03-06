@@ -53,7 +53,7 @@ while True:
 
     count += 1
     time.sleep(1)
-    
+
 ic(len(all_data))
 
 
@@ -85,7 +85,7 @@ count: int = 0
 # end_index = user_input * batch_size
 
 for currency in tqdm(all_data):
-    
+
     url = f"{base_url}{currency.get('slug')}/"
     try:
         response = session.get(url)
@@ -100,12 +100,12 @@ for currency in tqdm(all_data):
     # Print the links
 
     for url_obj in discord_links:
-        
+
         discord_url = url_obj.get("href")
         if re.match(discord_regex, discord_url):
-            
+
             # domain regx
-            
+
             if ".com" in discord_url:
                 # urls ends with .com
                 # extract code from url .com
@@ -123,7 +123,7 @@ for currency in tqdm(all_data):
                         url_cell = worksheet1.cell(row=row, column=3, value=url)
                         url_cell.hyperlink = url
                         url_cell.style = 'Hyperlink'
-                        
+
                 except Exception as e:
                     # ic(e)
                     captcha_row += 1
@@ -135,7 +135,7 @@ for currency in tqdm(all_data):
                     url_cell.hyperlink = url
                     url_cell.style = 'Hyperlink'
             elif ".gg" in discord_url:
-                
+
                 # extract code from url .gg
                 code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
                 try:
@@ -161,9 +161,9 @@ for currency in tqdm(all_data):
                     url_cell = worksheet2.cell(row=captcha_row, column=3, value=url)
                     url_cell.hyperlink = url
                     url_cell.style = 'Hyperlink'
-                
+
         else:
-            
+
             # non discord direact urls
             try:
                 response = session.get(discord_url, allow_redirects=True)
@@ -197,7 +197,7 @@ for currency in tqdm(all_data):
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp
-filename = f"coincapmarket_invalid_links_{user_input}.xlsx"
+filename = f"coincapmarket_invalid_links_all.xlsx"
 
 # Save the workbook to the generated filename
 workbook.save(filename)
