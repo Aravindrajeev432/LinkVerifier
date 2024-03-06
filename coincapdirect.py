@@ -1,6 +1,6 @@
 import time
 from requests import Session
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects,MissingSchema
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects,MissingSchema, InvalidSchema
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
@@ -74,17 +74,17 @@ worksheet2.cell(row=captcha_row, column=3, value="Page Link")
 base_url = "https://coinmarketcap.com/currencies/"
 discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
 
-total_batch : int = int(len(all_data)/batch_size)
-ic("Total Batches: ",total_batch)
-user_input = int(input("Enter the batch number (starting from 1): "))
+# total_batch : int = int(len(all_data)/batch_size)
+# ic("Total Batches: ",total_batch)
+# user_input = int(input("Enter the batch number (starting from 1): "))
 
 
 count: int = 0
 
-start_index = (user_input - 1) * batch_size
-end_index = user_input * batch_size
+# start_index = (user_input - 1) * batch_size
+# end_index = user_input * batch_size
 
-for currency in tqdm(all_data[start_index:end_index]):
+for currency in tqdm(all_data):
     
     url = f"{base_url}{currency.get('slug')}/"
     try:
@@ -167,7 +167,7 @@ for currency in tqdm(all_data[start_index:end_index]):
             # non discord direact urls
             try:
                 response = session.get(discord_url, allow_redirects=True)
-            except (MissingSchema,ConnectionError, Timeout, TooManyRedirects) as e:
+            except (MissingSchema,ConnectionError, Timeout, TooManyRedirects, InvalidSchema) as e:
                 continue
             final_url = response.url
             try:
