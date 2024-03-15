@@ -32,7 +32,13 @@ def main():
     coins = coins_from_file.get('data').get('rankings').get('edges')
     print(len(coins))
     discord_urls : list = []
+    limit = 0
     for coin in tqdm(coins):
+        limit += 1
+        if limit < 150:
+            continue
+        if limit >300:
+            break
         slug = coin.get('node').get('slug')
         link = check_for_discord_links(url=f"https://opensea.io/collection/{slug}")
         if link:

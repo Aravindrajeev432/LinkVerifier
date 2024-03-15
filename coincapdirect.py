@@ -90,6 +90,8 @@ for currency in tqdm(all_data):
     try:
         response = session.get(url)
     except (ConnectionError, Timeout, TooManyRedirects) as e:
+        ic("Ending program due to -->")
+        ic(e)
         break
 
     html = response.text
