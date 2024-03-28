@@ -30,6 +30,12 @@ Use python for Windows, python3 for Mac/Linux
   python3 conincapdirect.py
 ```
 
+## Blur.io
+
+```bash
+  cd blur.io
+  python3 blurv1.py
+```
 ## Coingecko
 
 ```bash
