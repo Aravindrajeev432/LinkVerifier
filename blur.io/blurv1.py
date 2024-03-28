@@ -79,17 +79,12 @@ def generate_links_from_json(filename):  # generating page links using the contr
     with open(filename, "r") as json_file:
         data = json.load(json_file)
 
-    count = 0
     all_links = []
     for item in data:
         item_name = item.get("name")
         contract_address = item.get("contractAddress")
         link = f"https://blur.io/collection/{item_name}"
         all_links.append((link, contract_address))
-
-        count += 1
-        if count == 100:
-            break
     return all_links
 
 
