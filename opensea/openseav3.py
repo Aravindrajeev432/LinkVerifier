@@ -32,13 +32,7 @@ def main():
     coins = coins_from_file.get('data').get('rankings').get('edges')
     print(len(coins))
     discord_urls : list = []
-    limit = 0
     for coin in tqdm(coins):
-        limit += 1
-        if limit < 150:
-            continue
-        if limit >300:
-            break
         slug = coin.get('node').get('slug')
         link = check_for_discord_links(url=f"https://opensea.io/collection/{slug}")
         if link:
@@ -53,9 +47,9 @@ def main():
     return
     
     
-def read_contacts_from_json(json_file_path):
+def read_contacts_from_json(json_file_path, encoding='utf-8'):
     try:
-        with open(json_file_path, 'r') as json_file:
+        with open(json_file_path, 'r', encoding=encoding) as json_file:
             contacts = json.load(json_file)
         return contacts
     except FileNotFoundError:
@@ -64,7 +58,6 @@ def read_contacts_from_json(json_file_path):
     except json.JSONDecodeError:
         print(f"Error decoding JSON in file: {json_file_path}")
         return []
-
     # Specify the path to the JSON file
 
 # "data": {
