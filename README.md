@@ -66,6 +66,8 @@ Under development
 ```bash
     cd coingecko/v4
     python3 coingeckov4.py
+    python3 get_discord_links.py
+    python3 check_discord_links.py
 ```
 
 ## Crypto.com

@@ -95,3 +95,4 @@ def coingecko_code_extracter(session: Session,coin_id : str) -> Optional[dict]:
                 return {'code':code,'url':url}
             except Exception as e:
                 return {'captcha':True}
+            
