@@ -10,6 +10,7 @@ from datetime import datetime
 def fetch_all_data(initial_url, headers):
     all_data = []
     api_url = initial_url
+    retries = 3
     while api_url:
         try:
             response = requests.get(api_url, headers=headers)
@@ -29,7 +30,7 @@ def fetch_all_data(initial_url, headers):
                     api_url = None
             else:
                 api_url = None
-            retries = 3
+            
         except requests.exceptions.RequestException as e:
             # print("Error fetching data:", e)
             retries -= 1
