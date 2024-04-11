@@ -9,6 +9,8 @@ page: int = 0
 tables: list = []
 all_links: list = []
 while True:
+    if page > 50:
+        break
     page += 1
     url = f"https://www.coingecko.com/?items=50&page={page}"
     driver.get(url)
@@ -30,8 +32,8 @@ while True:
                 all_links.append(page_link)
         print("all links")
 
-
-        break
+        
+        
     else:
         break
 
