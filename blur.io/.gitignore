@@ -1,9 +1,0 @@
-/env
-auth.txt
-acces_code.py
-*.xlsx
-*.txt
-*.json
-.env
-*.env
-__pycache__
