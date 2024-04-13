@@ -151,10 +151,10 @@ def is_valid_link_checker(code: str) -> bool:
                 "Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",
             },
         )
-        limit_remining: str = response.headers.get("x-ratelimit-remaining")
+        limit_remining: str = response.headers.get("x-ratelimit-remaining",1)
 
         if int(limit_remining) <= 2:
-            time.sleep(float(response.headers.get("x-ratelimit-reset-after")))
+            time.sleep(float(response.headers.get("x-ratelimit-reset-after",20)))
         if response.status_code != 200:
             if response.status_code == 429:
                 print(f"==>> limit_remining: {limit_remining}")
