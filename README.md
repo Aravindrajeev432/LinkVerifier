@@ -36,28 +36,7 @@ Use python for Windows, python3 for Mac/Linux
   cd blur.io
   python3 blurv1.py
 ```
-## Coingecko
 
-```bash
-  cd coingecko
-  python3 coingecko.py
-```
-
-## Coingecko Version 2(Depricated)
-
-```bash
-  cd coingecko
-  python3 coingeckov2.py
-
-```
-
-## Coingecko Version 3 (outdated)
-
-```bash
-  cd coingecko
-  python3 coingeckov3.py
-
-```
 
 ## Coingecko Version 4
 
@@ -91,7 +70,5 @@ After completion run check_discord_links.py to get the invalid dicord links
 ```
 
 # Notes
-
-In coingeckov3 reduced coin page link fetch time
-Try latest version specified
-CoinSniper & Opensea coming soon..
+Make sure installed required packages.
+Try latest version specified.

@@ -169,13 +169,16 @@ for link, contract_address in tqdm(all_links):
             url_cell.style = "Hyperlink"
             time.sleep(1)
     elif ".gg" in discord_url:
+        print(f"==>> discord_url: {discord_url}")
         # extract code from url .gg
         code_regex = r"https?://discord\.gg/([a-zA-Z0-9-]+)"
         try:
             code = re.search(code_regex, discord_url).group(1)
+            print(f"==>> code: {code}")
             if code == "EhrkaCH":
                 continue
             result = is_valid_link_checker(session=session, code=code)
+            print(f"==>> result: {result}")
             if not result:
                 row += 1
                 print(discord_url)
