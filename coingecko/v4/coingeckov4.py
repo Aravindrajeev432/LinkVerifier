@@ -9,14 +9,15 @@ page: int = 0
 tables: list = []
 all_links: list = []
 while True:
-    if page > 50:
+    if page > 15:
         break
     page += 1
-    url = f"https://www.coingecko.com/?items=50&page={page}"
+    url = f"https://www.coingecko.com/?items=300&page={page}"
     driver.get(url)
-    driver.implicitly_wait(2.5)
+    driver.implicitly_wait(3.5)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     table = soup.find("div", {"class": "tw-overflow-x-auto 2lg:tw-overflow-x-visible 2lg:tw-flex 2lg:tw-justify-center"})
+    
     if table:
         print("inside table")
         all_page_links: list = table.find_all(
@@ -30,7 +31,7 @@ while True:
             else:
                 page_link = f"https://www.coingecko.com{link.get('href')}"
                 all_links.append(page_link)
-        print("all links")
+        
 
         
         
@@ -38,7 +39,7 @@ while True:
         break
 
 all_coin_links: list = list(set(all_links))
-print(len(all_links))
+print(len(all_coin_links))
 file_path = "all_coins_links.json"
 with open(file_path, "w", encoding="utf-8") as json_file:
     json.dump(all_coin_links, json_file, indent=2)
