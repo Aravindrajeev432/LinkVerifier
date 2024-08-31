@@ -1,7 +1,7 @@
 # Link Verifer
 
 Checking a Discord invitaion Link valid or not
-
+This project is not for public use, so it may go private 🫥
 ## Installation
 
 Use an Env(install if you dont)

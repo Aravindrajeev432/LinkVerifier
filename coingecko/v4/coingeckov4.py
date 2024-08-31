@@ -9,7 +9,7 @@ page: int = 0
 tables: list = []
 all_links: list = []
 while True:
-    if page > 15:
+    if page > 4:
         break
     page += 1
     url = f"https://www.coingecko.com/?items=300&page={page}"

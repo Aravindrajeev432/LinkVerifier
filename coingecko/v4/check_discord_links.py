@@ -48,7 +48,7 @@ def main():
     
 
     # Create the filename with the timestamp
-    filename = "coingecko_invalid_links.xlsx"
+    filename = "coingecko_invalid_linksv4.xlsx"
 
     # Save the workbook to the generated filename
     workbook.save(filename)

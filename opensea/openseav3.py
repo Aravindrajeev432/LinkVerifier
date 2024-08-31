@@ -29,7 +29,7 @@ def main():
 
     
     coins_from_file = read_contacts_from_json(json_file_path)
-    coins = coins_from_file.get('data').get('rankings').get('edges')
+    coins = coins_from_file.get('data').get('topCollectionsByCategory').get('edges')
     print(len(coins))
     discord_urls : list = []
     for coin in tqdm(coins):
