@@ -9,12 +9,12 @@ page: int = 0
 tables: list = []
 all_links: list = []
 while True:
-    if page > 4:
+    if page > 12:
         break
     page += 1
     url = f"https://www.coingecko.com/?items=300&page={page}"
     driver.get(url)
-    driver.implicitly_wait(3.5)
+    driver.implicitly_wait(4.5)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     table = soup.find("div", {"class": "tw-overflow-x-auto 2lg:tw-overflow-x-visible 2lg:tw-flex 2lg:tw-justify-center"})
     
@@ -36,8 +36,9 @@ while True:
         
         
     else:
+        print("no tabel so breaking")
         break
-
+driver.quit()
 all_coin_links: list = list(set(all_links))
 print(len(all_coin_links))
 file_path = "all_coins_links.json"

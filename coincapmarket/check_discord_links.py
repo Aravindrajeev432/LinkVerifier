@@ -5,12 +5,31 @@ import time
 import requests
 from tqdm import tqdm
 from requests.exceptions import MissingSchema, TooManyRedirects, Timeout
+import openpyxl
 from openpyxl import Workbook
 from datetime import datetime
 def main():
+    skip_old_links:int = int(input("skip old links:1 for True, 0 for False"))
+    invalid_discord_links_history = set()
+    if skip_old_links == 1:
+        wb = openpyxl.load_workbook('coincapmarkrtv2_invalid_links.xlsx')
+
+        # Get the active sheet (or a specific sheet by name)
+        sheet = wb.active  # or sheet = wb['Sheet1']
+
+        for row in sheet.iter_rows(min_row=1, max_col=sheet.max_column, values_only=True):
+            invalid_discord_link = row[1]
+            if invalid_discord_link == "Invalid Discord Link":
+                continue
+            if invalid_discord_link not in invalid_discord_links_history:
+                invalid_discord_links_history.add(invalid_discord_link)
+
+
+    else:
+        pass
     workbook = Workbook()
     worksheet1 = workbook.active
-    worksheet1.title = "Opensea Invalid Links"
+    worksheet1.title = "CoinCapMarket Invalid Links"
     
     row = 1
 
@@ -29,6 +48,8 @@ def main():
         # print(link.get('slug'))
         if link.get("discord_url") is None:
             continue
+        if link.get("discord_url") in invalid_discord_links_history:
+            continue
         result: bool = check_dicord_links(
             discord_url=link.get("discord_url"), slug=link.get("slug")
         )
@@ -41,7 +62,7 @@ def main():
             )
             discord_cell.hyperlink = link.get("discord_url")
             discord_cell.style = "Hyperlink"
-            page_link = f"https://opensea.io/collection/{link.get('slug')}"
+            page_link = f"https://coinmarketcap.com/currencies/{link.get('slug')}"
             url_cell = worksheet1.cell(row=row, column=3, value=page_link)
             url_cell.hyperlink = page_link
             url_cell.style = "Hyperlink"
@@ -50,7 +71,7 @@ def main():
     
 
     # Create the filename with the timestamp
-    filename = "opensea_invalid_links.xlsx"
+    filename = "coincapmarkrtv2_invalid_links.xlsx"
 
     # Save the workbook to the generated filename
     workbook.save(filename)

@@ -4,7 +4,7 @@ from requests.exceptions import ConnectionError, Timeout, TooManyRedirects,Missi
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
-from icecream import ic
+
 from utils import is_valid_link
 
 session = Session()
@@ -15,7 +15,7 @@ batch_size: int = 500
 batch_count: int = 0
 
 
-ic("Please wait :)")
+print("Please wait :)")
 
 
 
@@ -46,6 +46,8 @@ while True:
         break
     crypto_data = response.json().get("data").get("cryptoCurrencyList")
     all_data += crypto_data
+    if len(crypto_data) > 5000:
+        break
     if len(crypto_data) == 0:
         break
     if count > 0:
@@ -54,7 +56,7 @@ while True:
     count += 1
     time.sleep(1)
 
-ic(len(all_data))
+print(len(all_data))
 
 
 
@@ -75,7 +77,7 @@ base_url = "https://coinmarketcap.com/currencies/"
 discord_regex = r'(?:https?://)?(?:discord\.(?:[a-z]+))'
 
 # total_batch : int = int(len(all_data)/batch_size)
-# ic("Total Batches: ",total_batch)
+# print("Total Batches: ",total_batch)
 # user_input = int(input("Enter the batch number (starting from 1): "))
 
 
@@ -86,14 +88,14 @@ count: int = 0
 
 for currency in tqdm(all_data):
     count += 1
-    if count > 1000:
+    if count > 3000:
         break
     url = f"{base_url}{currency.get('slug')}/"
     try:
         response = session.get(url)
     except (ConnectionError, Timeout, TooManyRedirects) as e:
-        ic("Ending program due to -->")
-        ic(e)
+        print("Ending program due to -->")
+        print(e)
         break
 
     html = response.text
@@ -116,7 +118,7 @@ for currency in tqdm(all_data):
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
-                    ic(code)
+                    print(code)
                     result = is_valid_link(session=session,code=code)
                     if not result:
                         row += 1
@@ -129,7 +131,7 @@ for currency in tqdm(all_data):
                         url_cell.style = 'Hyperlink'
 
                 except Exception as e:
-                    # ic(e)
+                    # print(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
@@ -144,7 +146,7 @@ for currency in tqdm(all_data):
                 code_regex = r'https?://discord\.gg/([a-zA-Z0-9-]+)'
                 try:
                     code = re.search(code_regex, discord_url).group(1)
-                    ic(code)
+                    print(code)
                     result = is_valid_link(session=session,code=code)
                     if not result:
                         row += 1
@@ -156,7 +158,7 @@ for currency in tqdm(all_data):
                         url_cell.hyperlink = url
                         url_cell.style = 'Hyperlink'
                 except Exception as e:
-                    # ic(e)
+                    # print(e)
                     captcha_row += 1
                     worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                     discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
@@ -177,7 +179,7 @@ for currency in tqdm(all_data):
             try:
                 code_regex = r'https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)'
                 code = re.search(code_regex, final_url).group(1)
-                ic(code)
+                print(code)
                 result = is_valid_link(session=session,code=code)
                 if not result:
                     row += 1
@@ -189,7 +191,7 @@ for currency in tqdm(all_data):
                     url_cell.hyperlink = url
                     url_cell.style = 'Hyperlink'
             except Exception as e:
-                # ic(e)
+                # print(e)
                 captcha_row += 1
                 worksheet2.cell(row=captcha_row, column=1, value=currency.get('name'))
                 discord_cell = worksheet2.cell(row=captcha_row, column=2, value=discord_url)
@@ -202,7 +204,7 @@ for currency in tqdm(all_data):
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Create the filename with the timestamp
-filename = f"coincapmarket_invalid_links_all.xlsx"
+filename = f"coincapmarket_invalid_links_all_full1.xlsx"
 
 # Save the workbook to the generated filename
 workbook.save(filename)

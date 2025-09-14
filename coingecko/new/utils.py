@@ -1,62 +1,11 @@
+
 import json
-from pprint import pprint
 import re
 import time
+
+import openpyxl
 import requests
-from tqdm import tqdm
 from requests.exceptions import MissingSchema, TooManyRedirects, Timeout
-from openpyxl import Workbook
-from datetime import datetime
-def main():
-    workbook = Workbook()
-    worksheet1 = workbook.active
-    worksheet1.title = "Opensea Invalid Links"
-    
-    row = 1
-
-    worksheet1.cell(row=1, column=2, value="Invalid Discord Link")
-    worksheet1.cell(row=1, column=3, value="Page Link")
-
-
-    json_file_path = "all_discord_links.json"
-
-    # Read contacts from the JSON file
-    json_data: list = read_contacts_from_json(json_file_path)
-
-    # Print the data
-    pprint(len(json_data))
-    for link in tqdm(json_data):
-        # print(link.get('slug'))
-        if link.get("discord_url") is None:
-            continue
-        result: bool = check_dicord_links(
-            discord_url=link.get("discord_url"), slug=link.get("slug")
-        )
-        if not result:
-            # print(link.get("slug"))
-            row += 1
-            
-            discord_cell = worksheet1.cell(
-                row=row, column=2, value=link.get("discord_url")
-            )
-            discord_cell.hyperlink = link.get("discord_url")
-            discord_cell.style = "Hyperlink"
-            page_link = f"https://opensea.io/collection/{link.get('slug')}"
-            url_cell = worksheet1.cell(row=row, column=3, value=page_link)
-            url_cell.hyperlink = page_link
-            url_cell.style = "Hyperlink"
-
-    
-    
-
-    # Create the filename with the timestamp
-    filename = "opensea_invalid_links.xlsx"
-
-    # Save the workbook to the generated filename
-    workbook.save(filename)
-
-    return
-
 
 def read_contacts_from_json(json_file_path):
     try:
@@ -177,5 +126,39 @@ def is_valid_link_checker(code: str) -> bool:
     return True
 
 
-if __name__ == "__main__":
-    main()
+
+def create_invalid_discord_links_history():
+    """
+    python3 -c 'from utils import *; create_invalid_discord_links_history()'
+    """
+    with open("invalid_discord_links_history.json", "r") as json_file:
+        try:
+            invalid_discord_links_history:dict[str:str]= json.load(json_file)
+        except FileNotFoundError:
+            print("File not found: invalid_discord_links_history.json")
+            invalid_discord_links_history = {}
+        except json.JSONDecodeError:
+            print("Error decoding JSON in file: invalid_discord_links_history.json")
+            invalid_discord_links_history = {}
+
+    
+    wb = openpyxl.load_workbook('coingecko_invalid_linksv4.xlsx')
+
+    # Get the active sheet (or a specific sheet by name)
+    sheet = wb.active  # or sheet = wb['Sheet1']
+
+    # Access a specific cell's value
+    # cell_value = sheet['A1'].value
+    # print(f"Value in A1: {cell_value}")
+
+    # Iterate through rows and print values
+    for row in sheet.iter_rows(min_row=1, max_col=sheet.max_column, values_only=True):
+        page_link = row[2]
+        if page_link == "Page Link":
+            continue
+        if page_link not in invalid_discord_links_history:
+            invalid_discord_links_history[page_link] = row[1] # discord link
+
+    with open("invalid_discord_links_history.json", "w") as json_file:
+        json.dump(invalid_discord_links_history, json_file, indent=4)
+

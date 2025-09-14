@@ -5,7 +5,6 @@ import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.proxy import Proxy, ProxyType
-from tqdm import tqdm
 from utils import read_contacts_from_json
 
 driver = webdriver.Chrome()
@@ -16,16 +15,11 @@ def main():
     # Read contacts from the JSON file
     json_data: list = read_contacts_from_json(json_file_path)
 
-    proxies:list = get_proxies()
-    
-    json_file_path = "all_coins_links.json"
-    # Read contacts from the JSON file
-    json_data: list = read_contacts_from_json(json_file_path)
     print(len(json_data))
     current_proxy_index = 0
     
-    for link in tqdm(json_data):
-        proxy = proxies[current_proxy_index]
+    for link in json_data:
+        
         # Rotate to the next proxy
 
         driver.get(link)
@@ -43,7 +37,7 @@ def main():
                     continue
                 
                 all_discord_links.append({"slug":link,"discord_url":discord_url})
-        current_proxy_index = (current_proxy_index + 1) % len(proxies)
+        
     print(len(all_discord_links))
     file_path = "all_discord_links.json"
     with open(file_path, "w", encoding="utf-8") as json_file:
@@ -51,12 +45,6 @@ def main():
 
 
 
-def get_proxies()->list:
-    # read valid ips from file
-    file_path = "valid_ips.json"
-    with open(file_path, "r", encoding="utf-8") as json_file:
-        ips = json.load(json_file)
-    return ips
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,7 @@ from datetime import datetime
 def main():
     workbook = Workbook()
     worksheet1 = workbook.active
-    worksheet1.title = "Opensea Invalid Links"
+    worksheet1.title = "Dexscreener  Invalid Links"
     
     row = 1
 
@@ -27,10 +27,8 @@ def main():
     pprint(len(json_data))
     for link in tqdm(json_data):
         # print(link.get('slug'))
-        if link.get("discord_url") is None:
-            continue
         result: bool = check_dicord_links(
-            discord_url=link.get("discord_url"), slug=link.get("slug")
+            discord_url=link.get("discord_url"), slug=""
         )
         if not result:
             # print(link.get("slug"))
@@ -41,7 +39,7 @@ def main():
             )
             discord_cell.hyperlink = link.get("discord_url")
             discord_cell.style = "Hyperlink"
-            page_link = f"https://opensea.io/collection/{link.get('slug')}"
+            page_link = link.get('page_url')
             url_cell = worksheet1.cell(row=row, column=3, value=page_link)
             url_cell.hyperlink = page_link
             url_cell.style = "Hyperlink"
@@ -50,7 +48,7 @@ def main():
     
 
     # Create the filename with the timestamp
-    filename = "opensea_invalid_links.xlsx"
+    filename = "DexScreener_invalid_linksv4.xlsx"
 
     # Save the workbook to the generated filename
     workbook.save(filename)
@@ -78,7 +76,7 @@ def check_dicord_links(discord_url: str, slug: str):
         code_regex = r"https?:\/\/discord\.com\/invite\/([a-zA-Z0-9-]+)"
         try:
             code = re.search(code_regex, discord_url).group(1)
-            # print(code)
+            print(code)
             result = is_valid_link_checker(code=code)
             return result
             # if not result:
@@ -111,7 +109,7 @@ def check_dicord_links(discord_url: str, slug: str):
         code_regex = r"https?://discord\.gg/([a-zA-Z0-9-]+)"
         try:
             code = re.search(code_regex, discord_url).group(1)
-            # print(code)
+            print(code)
             result = is_valid_link_checker(code=code)
             return result
             # if not result:
@@ -153,10 +151,10 @@ def is_valid_link_checker(code: str) -> bool:
                 "Authorization": "Bearer vh4jtqRCG5tW7NljfdihoIcBxCuspl",
             },
         )
-        limit_remining: str = response.headers.get("x-ratelimit-remaining",1)
+        limit_remining: str = response.headers.get("x-ratelimit-remaining")
 
         if int(limit_remining) <= 2:
-            time.sleep(float(response.headers.get("x-ratelimit-reset-after",20)))
+            time.sleep(float(response.headers.get("x-ratelimit-reset-after")))
         if response.status_code != 200:
             if response.status_code == 429:
                 print(f"==>> limit_remining: {limit_remining}")

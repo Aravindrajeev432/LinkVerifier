@@ -30,3 +30,6 @@ while True:
 
 with open('skynet_coins.json', 'w') as f:
     json.dump(data, f)
+
+print("hi 1")
+print("hi 2")
