@@ -36,6 +36,9 @@ Use python for Windows, python3 for Mac/Linux
 ```bash
   cd coincapmarket
   python3 coincapdirectv2.py
+  python3 extract_discord_links.py
+  python3 check_discord_links.py
+
 ```
 
 coinmarketcap_meta_data.json will be created

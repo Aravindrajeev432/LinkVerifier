@@ -9,7 +9,7 @@ import openpyxl
 from openpyxl import Workbook
 from datetime import datetime
 def main():
-    skip_old_links:int = int(input("skip old links:1 for True, 0 for False"))
+    skip_old_links:int = int(input("Skip Old Links:1 for True, 0 for False "))
     invalid_discord_links_history = set()
     if skip_old_links == 1:
         wb = openpyxl.load_workbook('coincapmarkrtv2_invalid_links.xlsx')
