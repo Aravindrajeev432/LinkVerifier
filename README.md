@@ -16,7 +16,7 @@ Use an Env(install if you dont)
 ### activate env 
 
 mac
-```bash
+```
 source env/bin/activate
 ```
 
@@ -49,9 +49,7 @@ Use python for Windows, python3 for Mac/Linux
 coinmarketcap_meta_data.json will be created
 then
 
-```bash
-  python3 extract_discord_links.py
-```
+
 
 ## Blur.io
 
@@ -72,11 +70,11 @@ goto https://www.coingecko.com/
 copy page source and paste in gecko.html
 run 
 ```bash
-python3 load_html.html
+python3 load_html.py
 ```
 continue the process for next 9 pages
 ```bash
-python3 remove_old_discord_links.py
+python3 remove_old_discord_links_history.py
 python3 get_discord_linksv2.py
 python3 check_discord_links.py
 ```
