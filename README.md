@@ -13,7 +13,12 @@ Use an Env(install if you dont)
 
 Use an Env(install if you dont)
 
-### activate env and..
+### activate env 
+
+mac
+```bash
+source env/bin/activate
+```
 
 ```bash
 
