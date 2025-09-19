@@ -30,24 +30,16 @@ Use python for Windows, python3 for Mac/Linux
 
 ## Sites
 
-## CoinCapMarket
 
-```bash
-  python3 conincapdirect.py
-```
+## CoinCapMarket V3
 
-## CoinCapMarket V2
-
+*API key required
 ```bash
   cd coincapmarket
-  python3 coincapdirectv2.py
-  python3 extract_discord_links.py
-  python3 check_discord_links.py
+  python3 coinmarketcapv3.py
 
 ```
 
-coinmarketcap_meta_data.json will be created
-then
 
 
 
@@ -62,6 +54,7 @@ then
 
 Under development
 
+Clear all_coins_links.json before start
 ```bash
     cd coingecko/new
     python3 -c 'from utils import *; create_invalid_discord_links_history()'
