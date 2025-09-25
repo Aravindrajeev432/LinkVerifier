@@ -79,7 +79,7 @@ def check_for_discord_links(url: str):
     }
 
     res = requests.get(url=url, headers=headers)
-    # print(res.status_code)
+    print(res.status_code)
     html = res.text
     soup = BeautifulSoup(html, "html.parser")
     # with open("output.html", "w", encoding="utf-8") as file:

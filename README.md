@@ -80,31 +80,14 @@ python3 check_discord_links.py
   python3 cryptov1.py
 ```
 
-## OpenSea
+## Opensea
+v3,v4 depricated
 
-get all coin data from https://opensea.io/rankings?sortBy=total_volume
-select All, and lookfor a graphql request in network tab . copy the data.
-create and paste in 'custom_data.json' file . then run openseav3.py,
-After completion run check_discord_links.py to get the invalid dicord links
-
+Current working version is opensea_api_v1
 ```
-   cd opensea
-   python3 openseav3.py
-   python3 check_discord_links.py
-   
+  cd opensea
+  python3 opensea_api_v1.py
 ```
-
-## OpenSea From Every Category
-
-in early we're only fetching 24h volume coin details,
-in this we're going through every volumes,
-
-goto https://opensea.io/rankings and
-and lookfor a graphql request in network tab . copy the data.
-create and paste in 'custom_data.json' file
-do this for every every voulume
-
-and run openseav4.py in each step , distint discord urls are saved
 
 ## Dexscreener
 
