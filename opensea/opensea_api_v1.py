@@ -54,7 +54,11 @@ def main():
     total_limit = int(input("Enter the total limit(eg:1000,2000) min:-100 : "))
     all_collections_length = 0 
     all_discord_links_dict:dict[str:str] = {}
+    count = 0
+    next_page = None
     while True:
+        count += 1
+        print(f"Fetching Page {count}")
         time.sleep(5)
         headers = {
         'accept': 'application/json',
@@ -67,6 +71,9 @@ def main():
             'limit':100
         }
 
+        if next_page is not None:
+            params['next'] = next_page
+
         response = requests.get('https://api.opensea.io/api/v2/collections', params=params, headers=headers)
         # print(response.headers)
         # print(response.json())
@@ -77,8 +84,11 @@ def main():
                 # print(f"==>> name: {collection.get('name')}")
                 # print(f"==>> discord_url: {collection.get('discord_url')}")
                 # print(f"==>> all_discord_links_dict: {all_discord_links_dict}")
-        
+        print(f"==>> all_collections_length: {len(all_discord_links_dict)}")
         if all_collections_length >= total_limit:
+            break
+        next_page = response.json().get('next')
+        if next_page is None:
             break
 
     # print(f"==>> all_discord_links_dict: {all_discord_links_dict}")
